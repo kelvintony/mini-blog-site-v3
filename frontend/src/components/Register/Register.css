@@ -1,0 +1,6 @@
+.register-container {
+	display: flex;
+	justify-content: center;
+	margin: 80px auto;
+	padding: 10px;
+}
