@@ -40,7 +40,6 @@ const Form = () => {
 			.post('/posts', {...post, name: user?.result?.name})
 			.then(function(response) {
 				if (response) {
-					// localStorage.setItem('task', JSON.stringify(response.data.results));
 					setisLoading(false);
 					alert('submitted succefully');
 					navigate('/');
