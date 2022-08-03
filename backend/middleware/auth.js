@@ -14,6 +14,9 @@ const auth = async (req, res, next) => {
     if (token && isCustomAuth) {      
       decodedData = jwt.verify(token, secret);
 
+      // console.log("this is the id "+decodedData?.id) this is only possible to show on the console because we installed morgan
+      
+      //this req.userId can be anything, it can be req.acb or req.user
       req.userId = decodedData?.id;
     } else {
         //this is for google login in case we are signing in via google
@@ -25,6 +28,7 @@ const auth = async (req, res, next) => {
     next();
   } catch (error) {
     console.log(error);
+    res.status(401).json({message:error})
   }
 };
 

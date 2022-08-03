@@ -16,28 +16,37 @@ const initialState = {
 
 const Signin = () => {
 	const [ formData, setFormData ] = useState(initialState);
+
 	const [ isLoading, setisLoading ] = useState(false);
+
+	const [ error, setError ] = useState(false);
 
 	const navigate = useNavigate();
 
 	const handleSubmit = async () => {
-		setisLoading(true);
-		await authAxios
-			.post('/user/signin', formData)
-			.then(function(response) {
-				if (response) {
-					localStorage.setItem('profile', JSON.stringify(response.data));
+		if (formData.email.length === 0 || formData.password.length === 0) {
+			setError(true);
+		}
+
+		if (formData.email && formData.password) {
+			setisLoading(true);
+			await authAxios
+				.post('/user/signin', formData)
+				.then(function(response) {
+					if (response) {
+						localStorage.setItem('profile', JSON.stringify(response.data));
+						setisLoading(false);
+						alert('signin succefully');
+						navigate('/');
+						// console.log(response.message);
+					}
+				})
+				.catch(function(error) {
 					setisLoading(false);
-					alert('signin succefully');
-					navigate('/');
-					// console.log(response.message);
-				}
-			})
-			.catch(function(error) {
-				setisLoading(false);
-				alert('incorrect username or password');
-			});
-		console.log(formData);
+					alert('incorrect username or password');
+				});
+			// console.log(formData);
+		}
 	};
 
 	return (
@@ -54,6 +63,12 @@ const Signin = () => {
 					/>
 				</label>{' '}
 				<br />
+				{error && formData.email.length <= 0 ? (
+					<label style={{ color: 'red' }}>email can't be empty</label>
+				) : (
+					''
+				)}
+				<br />
 				<label>
 					Password <br />
 					<input
@@ -63,6 +78,12 @@ const Signin = () => {
 						onChange={(e) => setFormData({ ...formData, password: e.target.value })}
 					/>
 				</label>{' '}
+				<br />
+				{error && formData.password.length <= 0 ? (
+					<label style={{ color: 'red' }}>password can't be empty</label>
+				) : (
+					''
+				)}
 				<br />
 				<div>
 					<button className='btn-submit' type='submit' onClick={handleSubmit}>

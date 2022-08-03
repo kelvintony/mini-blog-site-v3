@@ -19,26 +19,51 @@ const initialState = {
 
 const Register = () => {
 	const [ formData, setFormData ] = useState(initialState);
+
 	const [ isLoading, setisLoading ] = useState(false);
+
+	const [ error, setError ] = useState(false);
 
 	const navigate = useNavigate();
 
 	const handleSubmit = async () => {
-		setisLoading(true);
-		await authAxios
-			.post('/user/signup', formData)
-			.then(function(response) {
-				if (response) {
-					localStorage.setItem('profile', JSON.stringify(response.data));
+		if (
+			formData.firstName.length === 0 ||
+			formData.lastName.length === 0 ||
+			formData.email.length === 0 ||
+			formData.password.length === 0 ||
+			formData.confirmPassword.length === 0
+		) {
+			setError(true);
+		}
+
+		if (formData.password !== formData.confirmPassword) {
+			return alert('passwords must match');
+		}
+
+		if (
+			formData.firstName &&
+			formData.lastName &&
+			formData.email &&
+			formData.password &&
+			formData.confirmPassword
+		) {
+			setisLoading(true);
+			await authAxios
+				.post('/user/signup', formData)
+				.then(function(response) {
+					if (response) {
+						localStorage.setItem('profile', JSON.stringify(response.data));
+						setisLoading(false);
+						alert('signup succefully');
+						navigate('/');
+					}
+				})
+				.catch(function(error) {
 					setisLoading(false);
-					alert('signup succefully');
-					navigate('/');
-				}
-			})
-			.catch(function(error) {
-				setisLoading(false);
-				alert('Email already exist');
-			});
+					alert('Email already exist');
+				});
+		}
 	};
 
 	return (
@@ -55,6 +80,12 @@ const Register = () => {
 					/>
 				</label>{' '}
 				<br />
+				{error && formData.firstName.length <= 0 ? (
+					<label style={{ color: 'red' }}>first name can't be empty</label>
+				) : (
+					''
+				)}
+				<br />
 				<label>
 					Last Name <br />
 					<input
@@ -64,6 +95,12 @@ const Register = () => {
 						onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
 					/>
 				</label>{' '}
+				<br />
+				{error && formData.lastName.length <= 0 ? (
+					<label style={{ color: 'red' }}>last name can't be empty</label>
+				) : (
+					''
+				)}
 				<br />
 				<label>
 					Email <br />
@@ -75,6 +112,12 @@ const Register = () => {
 					/>
 				</label>{' '}
 				<br />
+				{error && formData.email.length <= 0 ? (
+					<label style={{ color: 'red' }}>email can't be empty</label>
+				) : (
+					''
+				)}
+				<br />
 				<label>
 					Password <br />
 					<input
@@ -85,6 +128,12 @@ const Register = () => {
 					/>
 				</label>{' '}
 				<br />
+				{error && formData.password.length <= 0 ? (
+					<label style={{ color: 'red' }}>password can't be empty</label>
+				) : (
+					''
+				)}
+				<br />
 				<label>
 					Confirm Password <br />
 					<input
@@ -94,6 +143,12 @@ const Register = () => {
 						onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
 					/>
 				</label>{' '}
+				<br />
+				{error && formData.confirmPassword.length <= 0 ? (
+					<label style={{ color: 'red' }}>confirm Password can't be empty</label>
+				) : (
+					''
+				)}
 				<br />
 				<div>
 					<div>

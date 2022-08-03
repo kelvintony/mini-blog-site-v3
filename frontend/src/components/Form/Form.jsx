@@ -20,15 +20,23 @@ authAxios.interceptors.request.use((req)=>{
 const Form = () => {
 	const [ post, setPost ] = useState({title: '', message: '', tags: '', selectedFile: '' });
 	const [ isLoading, setisLoading ] = useState(false);
+
+	const [ error, setError ] = useState(false);
 	
 	const user =JSON.parse(localStorage.getItem('profile'))
-
+ 
 	const navigate = useNavigate();
  
 	const handleSubmit = async (e) => {
 		e.preventDefault();
-		setisLoading(true); 
-		await authAxios
+		
+		if (post.title.length === 0 || post.message.length === 0 || post.tags.length === 0 || post.selectedFile.length === 0) {
+			setError(true);
+		}
+		
+		if (post.title && post.message && post.tags && post.selectedFile ) {
+			setisLoading(true); 
+			await authAxios
 			.post('/posts', {...post, name: user?.result?.name})
 			.then(function(response) {
 				if (response) {
@@ -41,6 +49,9 @@ const Form = () => {
 			.catch(function(error) {
 				console.log(error);
 			});
+		}
+
+		
 	};
 	const handleClear = () => {};
 
@@ -66,6 +77,8 @@ const Form = () => {
 					/>
 				</label>{' '}
 				<br />
+				{error && post.title.length <= 0 ? <label style={{ color: 'red' }}>title can't be empty</label> : ''}
+				<br />
 				<label>
 					Message <br />
 					<textarea
@@ -78,15 +91,19 @@ const Form = () => {
 					/>
 				</label>{' '}
 				<br />
+				{error && post.message.length <= 0 ? <label style={{ color: 'red' }}>message can't be empty</label> : ''}
+				<br />
 				<label>
-					Tag <br />
+					Tags <br />
 					<input
 						type='text'
-						name='tag'
+						name='tags'
 						value={post.tags}
 						onChange={(e) => setPost({ ...post, tags: e.target.value.split(',') })}
 					/>
 				</label>{' '}
+				<br />
+				{error && post.tags.length <= 0 ? <label style={{ color: 'red' }}>tags can't be empty</label> : ''}
 				<br />
 				<div>
 					<FileBase
@@ -95,7 +112,8 @@ const Form = () => {
 						onDone={({ base64 }) => setPost({ ...post, selectedFile: base64 })}
 					/>
 				</div>
-				<span>no file chosen</span> <br />
+				{error && post.selectedFile.length <= 0 ? <label style={{ color: 'red' }}>file can't be empty</label> : ''}
+				<br />
 				<div>
 					<button className='btn-submit' type='submit' onClick={handleSubmit} disabled={isLoading}>
 						{isLoading && <i className='fa fa-refresh fa-spin' />} Submit

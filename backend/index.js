@@ -1,7 +1,7 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
-// import morgan from 'morgan';
+import morgan from 'morgan';
 
 //importing routers
 import postRoute from './routes/postRoute.js';
@@ -9,7 +9,7 @@ import userRoute from './routes/userRoute.js';
 
 const app = express();
 
-// app.use(morgan('dev'));
+app.use(morgan('dev'));
 app.use(express.json({ limit: '30mb', extended: true }));
 app.use(express.urlencoded({ limit: '30mb', extended: true }));
 app.use(cors());
